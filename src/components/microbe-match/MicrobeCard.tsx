@@ -8,9 +8,11 @@ interface MicrobeCardProps {
   microbe: Microbe;
   showSwipeAnimation: 'left' | 'right' | null;
   onSwipe: (direction: 'left' | 'right') => void;
+  onSuperMatch: () => void;
+  isSuperMatch: boolean;
 }
 
-export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe }: MicrobeCardProps) {
+export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe, onSuperMatch, isSuperMatch }: MicrobeCardProps) {
   return (
     <Card 
       className={`w-full max-w-md bg-card/80 backdrop-blur border-2 border-primary/30 overflow-hidden relative ${
@@ -83,24 +85,34 @@ export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe }: Mi
           {microbe.status}
         </div>
 
-        <div className="flex gap-4">
+        <div className="space-y-3">
           <Button
-            onClick={() => onSwipe('left')}
-            variant="outline"
-            className="flex-1 border-destructive text-destructive hover:bg-destructive hover:text-white"
+            onClick={onSuperMatch}
+            className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 hover:opacity-90 glow-strong text-white font-bold"
             size="lg"
           >
-            <Icon name="X" className="mr-2" size={20} />
-            Не совместимы
+            <Icon name="Sparkles" className="mr-2" size={20} />
+            Супермэтч! 💫
           </Button>
-          <Button
-            onClick={() => onSwipe('right')}
-            className="flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-            size="lg"
-          >
-            <Icon name="Heart" className="mr-2" size={20} />
-            Подходит
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              onClick={() => onSwipe('left')}
+              variant="outline"
+              className="flex-1 border-destructive text-destructive hover:bg-destructive hover:text-white"
+              size="lg"
+            >
+              <Icon name="X" className="mr-2" size={20} />
+              Не совместимы
+            </Button>
+            <Button
+              onClick={() => onSwipe('right')}
+              className="flex-1 bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              size="lg"
+            >
+              <Icon name="Heart" className="mr-2" size={20} />
+              Подходит
+            </Button>
+          </div>
         </div>
       </div>
     </Card>

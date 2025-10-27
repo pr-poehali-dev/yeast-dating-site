@@ -6,15 +6,16 @@ interface StatsTabProps {
   swipedLeft: number[];
   currentIndex: number;
   totalMicrobes: number;
+  superMatches: number[];
 }
 
-export default function StatsTab({ swipedRight, swipedLeft, currentIndex, totalMicrobes }: StatsTabProps) {
+export default function StatsTab({ swipedRight, swipedLeft, currentIndex, totalMicrobes, superMatches }: StatsTabProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold mb-6 text-center glow">
         Твоя статистика 📊
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="p-6 bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur border-primary/30">
           <div className="text-center">
             <Icon name="Heart" className="mx-auto mb-4 text-primary" size={48} />
@@ -38,6 +39,14 @@ export default function StatsTab({ swipedRight, swipedLeft, currentIndex, totalM
               {Math.round((swipedRight.length / (swipedRight.length + swipedLeft.length) * 100) || 0)}%
             </div>
             <p className="text-muted-foreground">Процент совместимости</p>
+          </div>
+        </Card>
+
+        <Card className="p-6 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 backdrop-blur border-yellow-500/30">
+          <div className="text-center">
+            <div className="text-4xl mb-4">💫</div>
+            <div className="text-4xl font-bold mb-2">{superMatches.length}</div>
+            <p className="text-muted-foreground">Супермэтчей</p>
           </div>
         </Card>
       </div>
