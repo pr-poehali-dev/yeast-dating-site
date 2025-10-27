@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import BubbleAnimation from '@/components/BubbleAnimation';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 interface Microbe {
   id: number;
@@ -91,6 +93,40 @@ const microbes: Microbe[] = [
     emoji: '🍶',
     gradient: 'gradient-pink',
     animation: 'animate-float'
+  },
+  {
+    id: 5,
+    name: 'Масло Клостридиум',
+    scientificName: 'Clostridium butyricum',
+    age: '2.5 млн лет',
+    occupation: 'Масляный производитель',
+    about: 'Глюкозу для масляной реакции',
+    hobby: 'Создавать масляную кислоту и водород',
+    hates: 'Кислород, высокий pH',
+    products: 'Масляная кислота, CO₂, H₂',
+    temperature: '35-40°C',
+    energy: '3 ATP с молекулы глюкозы',
+    status: 'Строго анаэробный режим! 🧈',
+    emoji: '🧈',
+    gradient: 'from-yellow-400 to-amber-600',
+    animation: 'animate-pulse-glow'
+  },
+  {
+    id: 6,
+    name: 'Мета Археи',
+    scientificName: 'Methanobacterium',
+    age: '3.5 млрд лет',
+    occupation: 'Газовый инженер',
+    about: 'CO₂ и H₂ для метаногенеза',
+    hobby: 'Производить метан из углекислого газа',
+    hates: 'Кислород, низкие температуры',
+    products: 'Метан (CH₄)',
+    temperature: '35-45°C',
+    energy: '1 ATP с молекулы CO₂',
+    status: 'Древнейший на планете! 💨',
+    emoji: '💨',
+    gradient: 'from-green-400 to-emerald-600',
+    animation: 'animate-float'
   }
 ];
 
@@ -99,8 +135,11 @@ const matches = [
   { pair: 'Лактобактерии + Молоко', result: 'Самый кремовый йогурт! 🥛', success: true },
   { pair: 'Пропионовые + Лактат', result: 'Сыр с идеальными дырками! 🧀', success: true },
   { pair: 'Уксуснокислые + Этанол', result: 'Ароматный уксус! 🍶', success: true },
+  { pair: 'Клостридии + Глюкоза', result: 'Масляная кислота и водород! 🧈', success: true },
+  { pair: 'Археи + CO₂ + H₂', result: 'Биометан для энергии! 💨', success: true },
   { pair: 'Дрожжи + Кислород', result: 'Окисление вместо брожения 😞', success: false },
-  { pair: 'Лактобактерии + Антибиотики', result: 'Уничтожена колония 💀', success: false }
+  { pair: 'Лактобактерии + Антибиотики', result: 'Уничтожена колония 💀', success: false },
+  { pair: 'Клостридии + Кислород', result: 'Гибель колонии 💀', success: false }
 ];
 
 const fermentationTypes = [
@@ -143,6 +182,36 @@ const fermentationTypes = [
     atp: '2 ATP',
     application: 'Уксус, комбуча',
     gradient: 'from-pink-500 to-rose-500'
+  },
+  {
+    type: 'Маслянокислое',
+    equation: 'Глюкоза → Масляная кислота + 2 CO₂ + 2 H₂ + 3 ATP',
+    products: 'Масляная кислота, CO₂, H₂',
+    microbes: 'Маслянокислые бактерии (Clostridium)',
+    temp: '35-40°C',
+    atp: '3 ATP',
+    application: 'Производство масляной кислоты',
+    gradient: 'from-yellow-500 to-amber-500'
+  },
+  {
+    type: 'Метановое',
+    equation: 'CO₂ + 4 H₂ → CH₄ + 2 H₂O',
+    products: 'Метан (CH₄)',
+    microbes: 'Метаногенные археи (Methanobacterium)',
+    temp: '35-45°C',
+    atp: '1 ATP',
+    application: 'Биогаз, очистка сточных вод',
+    gradient: 'from-green-500 to-emerald-500'
+  },
+  {
+    type: 'Гомоацетатное',
+    equation: 'Глюкоза → 3 Уксусная кислота',
+    products: 'Уксусная кислота',
+    microbes: 'Гомоацетатные бактерии (Clostridium aceticum)',
+    temp: '30-37°C',
+    atp: '3 ATP',
+    application: 'Производство ацетата',
+    gradient: 'from-indigo-500 to-purple-500'
   }
 ];
 
@@ -151,10 +220,22 @@ export default function Index() {
   const [swipedRight, setSwipedRight] = useState<number[]>([]);
   const [swipedLeft, setSwipedLeft] = useState<number[]>([]);
   const [showSwipeAnimation, setShowSwipeAnimation] = useState<'left' | 'right' | null>(null);
+  const { playSwipeSound, playBubbleSound } = useSoundEffects();
 
   const currentMicrobe = microbes[currentIndex];
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (Math.random() > 0.7) {
+        playBubbleSound();
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [playBubbleSound]);
+
   const handleSwipe = (direction: 'left' | 'right') => {
+    playSwipeSound(direction);
     setShowSwipeAnimation(direction);
     
     setTimeout(() => {
@@ -174,8 +255,9 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] via-[#221F26] to-[#1A1F2C] text-white">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] via-[#221F26] to-[#1A1F2C] text-white relative">
+      <BubbleAnimation />
+      <div className="container mx-auto px-4 py-8 max-w-6xl relative z-10">
         <header className="text-center mb-12 animate-float">
           <h1 className="text-6xl font-bold mb-4 glow-strong text-primary">
             MICROBE MATCH
