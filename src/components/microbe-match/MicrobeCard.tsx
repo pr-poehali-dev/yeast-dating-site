@@ -9,10 +9,10 @@ interface MicrobeCardProps {
   showSwipeAnimation: 'left' | 'right' | null;
   onSwipe: (direction: 'left' | 'right') => void;
   onSuperMatch: () => void;
-  isSuperMatch: boolean;
+  showSuperMatch: boolean;
 }
 
-export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe, onSuperMatch, isSuperMatch }: MicrobeCardProps) {
+export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe, onSuperMatch, showSuperMatch }: MicrobeCardProps) {
   return (
     <Card 
       className={`w-full max-w-md bg-card/80 backdrop-blur border-2 border-primary/30 overflow-hidden relative ${
@@ -86,14 +86,16 @@ export default function MicrobeCard({ microbe, showSwipeAnimation, onSwipe, onSu
         </div>
 
         <div className="space-y-3">
-          <Button
-            onClick={onSuperMatch}
-            className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 hover:opacity-90 glow-strong text-white font-bold"
-            size="lg"
-          >
-            <Icon name="Sparkles" className="mr-2" size={20} />
-            Супермэтч! 💫
-          </Button>
+          {showSuperMatch && (
+            <Button
+              onClick={onSuperMatch}
+              className="w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 hover:opacity-90 glow-strong text-white font-bold"
+              size="lg"
+            >
+              <Icon name="Sparkles" className="mr-2" size={20} />
+              Супермэтч! 💫
+            </Button>
+          )}
           <div className="flex gap-4">
             <Button
               onClick={() => onSwipe('left')}

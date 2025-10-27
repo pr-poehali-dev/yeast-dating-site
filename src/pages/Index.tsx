@@ -12,6 +12,7 @@ import ProfileForm, { UserProfile } from '@/components/microbe-match/ProfileForm
 import Confetti from '@/components/microbe-match/Confetti';
 import { microbes, matches, fermentationTypes } from '@/components/microbe-match/data';
 import { Microbe } from '@/components/microbe-match/types';
+import { isSuperMatchWorthy } from '@/utils/compatibility';
 
 interface SwipeHistoryItem {
   microbe: Microbe;
@@ -45,18 +46,20 @@ export default function Index() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!userProfile) return;
+      
       if (event.key === 'ArrowLeft') {
         handleSwipe('left');
       } else if (event.key === 'ArrowRight') {
         handleSwipe('right');
-      } else if (event.key === 'ArrowUp') {
+      } else if (event.key === 'ArrowUp' && isSuperMatchWorthy(currentMicrobe, userProfile)) {
         handleSuperMatch();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, swipedRight, swipedLeft, superMatches]);
+  }, [currentIndex, swipedRight, swipedLeft, superMatches, userProfile]);
 
   const handleSwipe = (direction: 'left' | 'right', isSuperMatch = false) => {
     playSwipeSound(direction);
@@ -188,18 +191,20 @@ export default function Index() {
             <div className="text-center mb-4 space-y-2">
               <p className="text-sm text-muted-foreground">
                 <kbd className="px-2 py-1 bg-muted/30 rounded text-xs">←</kbd> Не совместимы • 
-                <kbd className="px-2 py-1 bg-muted/30 rounded text-xs">→</kbd> Подходит • 
-                <kbd className="px-2 py-1 bg-muted/30 rounded text-xs">↑</kbd> Супермэтч 💫
+                <kbd className="px-2 py-1 bg-muted/30 rounded text-xs">→</kbd> Подходит
+                {userProfile && isSuperMatchWorthy(currentMicrobe, userProfile) && (
+                  <> • <kbd className="px-2 py-1 bg-muted/30 rounded text-xs">↑</kbd> Супермэтч 💫</>
+                )}
               </p>
             </div>
             <div className="flex justify-center items-center min-h-[600px]">
-              {currentMicrobe && (
+              {currentMicrobe && userProfile && (
                 <MicrobeCard 
                   microbe={currentMicrobe}
                   showSwipeAnimation={showSwipeAnimation}
                   onSwipe={handleSwipe}
                   onSuperMatch={handleSuperMatch}
-                  isSuperMatch={superMatches.includes(currentMicrobe.id)}
+                  showSuperMatch={isSuperMatchWorthy(currentMicrobe, userProfile)}
                 />
               )}
             </div>

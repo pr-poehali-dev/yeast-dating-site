@@ -9,7 +9,6 @@ export interface UserProfile {
   name: string;
   age: string;
   goal: string;
-  interests: string;
   favoriteType: string;
 }
 
@@ -22,7 +21,6 @@ export default function ProfileForm({ onComplete }: ProfileFormProps) {
     name: '',
     age: '',
     goal: '',
-    interests: '',
     favoriteType: '',
   });
 
@@ -35,7 +33,6 @@ export default function ProfileForm({ onComplete }: ProfileFormProps) {
     profile.name.trim() &&
     profile.age.trim() &&
     profile.goal.trim() &&
-    profile.interests.trim() &&
     profile.favoriteType.trim();
 
   return (
@@ -91,20 +88,6 @@ export default function ProfileForm({ onComplete }: ProfileFormProps) {
               value={profile.goal}
               onChange={(e) => setProfile({ ...profile, goal: e.target.value })}
               placeholder="Например: изучение биологии, научная работа, любопытство"
-              className="bg-background/50"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="interests" className="text-base">
-              <Icon name="Sparkles" size={18} className="inline mr-2" />
-              Твои интересы
-            </Label>
-            <Input
-              id="interests"
-              value={profile.interests}
-              onChange={(e) => setProfile({ ...profile, interests: e.target.value })}
-              placeholder="Например: наука, медицина, экология"
               className="bg-background/50"
             />
           </div>
